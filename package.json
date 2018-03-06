@@ -1,0 +1,24 @@
+{
+  "name": "adwords-api-integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labzed/adwords-api-integration.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labzed/adwords-api-integration/issues"
+  },
+  "homepage": "https://github.com/labzed/adwords-api-integration#readme",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2",
+    "node-adwords": "^201802.1.0"
+  }
+}
