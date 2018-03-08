@@ -29,7 +29,7 @@ let budget_operations = {
   }
 
   // Add the budget.
-let budget_id = budget_service.mutate([budget_operations], (error, result) => {
+let budget_id = budget_service.mutate({operations: [budget_operations]}, (error, result) => {
         console.log(error, result);
     })
 console.log(budget_id);
