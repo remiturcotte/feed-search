@@ -30,45 +30,47 @@ import uuid
 from googleads import adwords
 
 
-AD_GROUP_ID = '55947465594'
+#AD_GROUP_ID = '55947465594'
 NUMBER_OF_ADS = 5
 
 
 def main(client, ad_group_id):
-  # Initialize appropriate service.
-  ad_group_ad_service = client.GetService('AdGroupAdService', version='v201802')
+    # Initialize appropriate service.
+    ad_group_ad_service = client.GetService(
+        'AdGroupAdService', version='v201802')
 
-  operations = [
-      {
-          'operator': 'ADD',
-          'operand': {
-              'xsi_type': 'AdGroupAd',
-              'adGroupId': ad_group_id,
-              'ad': {
-                  'xsi_type': 'ExpandedTextAd',
-                  'headlinePart1': ('Cruise #%s to Mars'
-                                    % str(uuid.uuid4())[:8]),
-                  'headlinePart2': 'Best Space Cruise Line',
-                  'description': 'Buy your tickets now!',
-                  'finalUrls': ['http://www.example.com/%s' % i],
-              },
-              # Optional fields.
-              'status': 'PAUSED'
-          }
-      } for i in range(NUMBER_OF_ADS)
-  ]
-  ads = ad_group_ad_service.mutate(operations)
+    operations = [
+        {
+            'operator': 'ADD',
+            'operand': {
+                'xsi_type': 'AdGroupAd',
+                'adGroupId': ad_group_id,
+                'ad': {
+                    'xsi_type': 'ExpandedTextAd',
+                    'headlinePart1': ('Cruise #%s to Mars'
+                                      % str(uuid.uuid4())[:8]),
+                    'headlinePart2': 'Best Space Cruise Line',
+                    'description': 'Buy your tickets now!',
+                    'finalUrls': ['http://www.example.com/%s' % i],
+                },
+                # Optional fields.
+                'status': 'PAUSED'
+            }
+        } for i in range(NUMBER_OF_ADS)
+    ]
+    ads = ad_group_ad_service.mutate(operations)
+    return ads
 
-  # Display results.
-  for ad in ads['value']:
-    print ('Ad of type "%s" with id "%d" was added.'
-           '\n\theadlinePart1: %s\n\theadlinePart2: %s'
-           % (ad['ad']['Ad.Type'], ad['ad']['id'],
-              ad['ad']['headlinePart1'], ad['ad']['headlinePart2']))
+    # Display results.
+#   for ad in ads['value']:
+#     print ('Ad of type "%s" with id "%d" was added.'
+#            '\n\theadlinePart1: %s\n\theadlinePart2: %s'
+#            % (ad['ad']['Ad.Type'], ad['ad']['id'],
+#               ad['ad']['headlinePart1'], ad['ad']['headlinePart2']))
 
 
 if __name__ == '__main__':
-  # Initialize client object.
-  adwords_client = adwords.AdWordsClient.LoadFromStorage()
+    # Initialize client object.
+    adwords_client = adwords.AdWordsClient.LoadFromStorage()
 
-  main(adwords_client, AD_GROUP_ID)
+    main(adwords_client, AD_GROUP_ID)

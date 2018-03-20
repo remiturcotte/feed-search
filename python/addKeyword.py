@@ -28,65 +28,66 @@ section of our README.
 from googleads import adwords
 
 
-AD_GROUP_ID = '55947465594'
+#AD_GROUP_ID = '55947465594'
 
 
 def main(client, ad_group_id):
-  # Initialize appropriate service.
-  ad_group_criterion_service = client.GetService(
-      'AdGroupCriterionService', version='v201802')
+    # Initialize appropriate service.
+    ad_group_criterion_service = client.GetService(
+        'AdGroupCriterionService', version='v201802')
 
-  # Construct keyword ad group criterion object.
-  keyword1 = {
-      'xsi_type': 'BiddableAdGroupCriterion',
-      'adGroupId': ad_group_id,
-      'criterion': {
-          'xsi_type': 'Keyword',
-          'matchType': 'BROAD',
-          'text': 'mars'
-      },
-      # These fields are optional.
-      'userStatus': 'PAUSED',
-      'finalUrls': {
-          'urls': ['http://example.com/mars']
-      }
-  }
+    # Construct keyword ad group criterion object.
+    keyword1 = {
+        'xsi_type': 'BiddableAdGroupCriterion',
+        'adGroupId': ad_group_id,
+        'criterion': {
+            'xsi_type': 'Keyword',
+            'matchType': 'BROAD',
+            'text': 'mars'
+        },
+        # These fields are optional.
+        'userStatus': 'PAUSED',
+        'finalUrls': {
+            'urls': ['http://example.com/mars']
+        }
+    }
 
-  keyword2 = {
-      'xsi_type': 'NegativeAdGroupCriterion',
-      'adGroupId': ad_group_id,
-      'criterion': {
-          'xsi_type': 'Keyword',
-          'matchType': 'EXACT',
-          'text': 'pluto'
-      }
-  }
+    keyword2 = {
+        'xsi_type': 'NegativeAdGroupCriterion',
+        'adGroupId': ad_group_id,
+        'criterion': {
+            'xsi_type': 'Keyword',
+            'matchType': 'EXACT',
+            'text': 'pluto'
+        }
+    }
 
-  # Construct operations and add ad group criteria.
-  operations = [
-      {
-          'operator': 'ADD',
-          'operand': keyword1
-      },
-      {
-          'operator': 'ADD',
-          'operand': keyword2
-      }
-  ]
-  ad_group_criteria = ad_group_criterion_service.mutate(
-      operations)['value']
+    # Construct operations and add ad group criteria.
+    operations = [
+        {
+            'operator': 'ADD',
+            'operand': keyword1
+        },
+        {
+            'operator': 'ADD',
+            'operand': keyword2
+        }
+    ]
+    ad_group_criteria = ad_group_criterion_service.mutate(
+        operations)['value']
+    return ad_group_criteria
 
-  # Display results.
-  for criterion in ad_group_criteria:
-    print ('Keyword ad group criterion with ad group id "%s", criterion id '
-           '"%s", text "%s", and match type "%s" was added.'
-           % (criterion['adGroupId'], criterion['criterion']['id'],
-              criterion['criterion']['text'],
-              criterion['criterion']['matchType']))
+# Display results.
+#   for criterion in ad_group_criteria:
+#     print ('Keyword ad group criterion with ad group id "%s", criterion id '
+#            '"%s", text "%s", and match type "%s" was added.'
+#            % (criterion['adGroupId'], criterion['criterion']['id'],
+#               criterion['criterion']['text'],
+#               criterion['criterion']['matchType']))
 
 
 if __name__ == '__main__':
-  # Initialize client object.
-  adwords_client = adwords.AdWordsClient.LoadFromStorage()
+    # Initialize client object.
+    adwords_client = adwords.AdWordsClient.LoadFromStorage()
 
-  main(adwords_client, AD_GROUP_ID)
+    main(adwords_client, AD_GROUP_ID)
