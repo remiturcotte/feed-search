@@ -59,3 +59,9 @@ Fields:
 - Exact, Phrase, Broad: `%%product_name%%`
 - Broad: `%%product_name_with_plusses%`
 - Then we could also add other types of keyword combinations. name + "price", name + color. To be determined.
+
+## Adwords limits
+
+- 10k campaigns per account: it's a problem because the goal is 100k or more products, per client account.
+- Workaround: one product = one adgroup, instead of one product=one campaign.
+- API per-day limit: 10k operations, the question is how many products does that represent?
