@@ -44,3 +44,18 @@ Fields:
   - Max CPC: `0.25`
   - Criterion Type: `Exact` `Phrase` `Broad`
   - Keyword: `Keyword`
+
+## Filling in variables
+
+- Headline 1 `{Keyword:%%DESCRIPTION_FR%%}` it means use the Keyword, or the default after the `:` if it's too long
+- Path 1 & Path 2 `%%productnameURLized%%`
+- By looking at the product feed, the question may be: what keywords to target.
+- Keywords to target: that may be an option in the UI:
+  - Product name
+  - SKU number
+
+## Adding keywords
+
+- Exact, Phrase, Broad: `%%product_name%%`
+- Broad: `%%product_name_with_plusses%`
+- Then we could also add other types of keyword combinations. name + "price", name + color. To be determined.
