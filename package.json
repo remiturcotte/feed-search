@@ -18,8 +18,8 @@
   "homepage": "https://github.com/labzed/adwords-api-integration#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "moment": "^2.21.0",
-    "node-adwords": "^201802.1.0"
+    "node-adwords": "^201802.2.0"
   }
 }
