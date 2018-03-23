@@ -4,6 +4,8 @@ const moment = require('moment');
 const AdwordsUser = require('node-adwords').AdwordsUser;
 const AdwordsConstants = require('node-adwords').AdwordsConstants;
 
+const HARDCODED_BUDGET_ID = '1385655048';
+
 const user = new AdwordsUser({
   developerToken: process.env.DEVELOPER_TOKEN, //your adwords developerToken
   userAgent: process.env.USER_AGENT, //any company name
@@ -31,18 +33,15 @@ const budget_operations = {
 };
 
 // Add the budget.
-// let budget_id = budget_service.mutate(
-//   { operations: [budget_operations] },
-//   (error, result) => {
-//     console.log('budgetService', error, result);
-//   }
-// );
-
-console.log(
-  moment()
-    .add(1, 'month')
-    .format('YYYY-MM-DD')
+let budget_id = budget_service.mutate(
+  { operations: [budget_operations] },
+  (error, result) => {
+    console.log('budgetService', error, result);
+  }
 );
+
+console.log('budget_id=', budget_id);
+
 //Construct operations and add campaigns.
 let operations = [
   {
@@ -53,10 +52,10 @@ let operations = [
       // stop the ads from immediately serving. Set to ENABLED once you've
       // added targeting and the ads are ready to serve.
       status: 'PAUSED',
-      startDate: '2018-03-01',
+      startDate: '2018-03-23',
       endDate: '2018-04-01',
       budget: {
-        budgetId: '1385733559'
+        budgetId: HARDCODED_BUDGET_ID,
       },
       frequencyCap: {
         impressions: '5',
@@ -120,5 +119,8 @@ let operations = [
 //let campaigns = campaign_service.mutate(operations)
 
 campaignService.mutate({ operations: operations }, (error, result) => {
-  console.log('campaignService', error.body, result.body);
+  if (error) {
+    console.error(error.body);
+  }
+  console.log('result', result); 
 });
