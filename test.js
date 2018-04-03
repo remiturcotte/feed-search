@@ -33,6 +33,7 @@ let campaignOptions = {
 // campaignId: '1333006300',
 // adGroupId: '56153946880'
 let productArray = [];
+let groupsArray = [];
 
 const controller = new AdwordsController();
 
@@ -95,44 +96,58 @@ function callAPI(products) {
   )
     .then(res => {
       console.log('groups done');
+      groupsArray = res;
 
-      Promise.map(
-        res,
-        async function(product) {
-          const API = await controller.addKeyword(product);
-          product.keywordResult = API.value[0];
-          return product;
-        },
-        { concurrency: 1 }
-      )
-        .then(res => {
-          console.log('keywords done');
-
-          Promise.map(
-            res,
-            async function(product) {
-              const API = await controller.addExpandedTextAd(product);
-              product.adExpandedResult = API.value[0];
-              return product;
-            },
-            { concurrency: 1 }
-          )
-            .then(res => {
-              //console.log(res);
-              const duration = clock(start);
-              console.log(
-                '-----------------------------------------Operation took ' +
-                  duration +
-                  'ms'
-              );
-            })
-            .catch(err => {
-              console.log('ads', err.body);
-            });
-        })
-        .catch(err => {
-          console.log('keywords', err.body);
+      controller.addKeyword(groupsArray).then(res => {
+        console.log(res);
+        controller.addExpandedTextAd(groupsArray).then(res => {
+          console.log(res);
+          const duration = clock(start);
+          console.log(
+            '-----------------------------------------Operation took ' +
+              duration +
+              'ms'
+          );
         });
+      });
+
+      // Promise.map(
+      //   res,
+      //   async function(product) {
+      //     const API = await controller.addKeyword(product);
+      //     product.keywordResult = API.value[0];
+      //     return product;
+      //   },
+      //   { concurrency: 1 }
+      // )
+      //   .then(res => {
+      //     console.log('keywords done');
+
+      //     // Promise.map(
+      //     //   res,
+      //     //   async function(product) {
+      //     //     const API = await controller.addExpandedTextAd(product);
+      //     //     product.adExpandedResult = API.value[0];
+      //     //     return product;
+      //     //   },
+      //     //   { concurrency: 1 }
+      //     // )
+      //     //   .then(res => {
+      //     //     //console.log(res);
+      //     //     const duration = clock(start);
+      //     //     console.log(
+      //     //       '-----------------------------------------Operation took ' +
+      //     //         duration +
+      //     //         'ms'
+      //     //     );
+      //     //   })
+      //     //   .catch(err => {
+      //     //     console.log('ads', err.body);
+      //     //   });
+      //   })
+      //   .catch(err => {
+      //     console.log('keywords', err.body);
+      //   });
     })
     .catch(err => console.log('groups', err));
 }

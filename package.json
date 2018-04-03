@@ -18,9 +18,11 @@
   "homepage": "https://github.com/labzed/adwords-api-integration#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "csvtojson": "^1.1.9",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "moment": "^2.21.0",
-    "node-adwords": "^201802.2.0"
+    "node-adwords": "^201802.2.0",
+    "shortid": "^2.2.8"
   }
 }
