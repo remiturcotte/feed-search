@@ -22,7 +22,7 @@ module.exports = class AdwordsController {
   /**
    *
    * @param {object} options
-   * @param {String} options.name
+   * @param {String} options.campaignName
    * @param {String} options.startDate
    * @param {String} options.endDate
    *
@@ -35,7 +35,7 @@ module.exports = class AdwordsController {
       {
         operator: 'ADD',
         operand: {
-          name: options.name,
+          name: options.campaignName,
           // Recommendation: Set the campaign to PAUSED when creating it to
           // stop the ads from immediately serving. Set to ENABLED once you've
           // added targeting and the ads are ready to serve.
@@ -111,7 +111,7 @@ module.exports = class AdwordsController {
   /**
    * @param {object} options
    * @param {String} options.campaignId
-   * @param {String} options.name
+   * @param {String} options.groupName
    */
 
   addAdGroup(options) {
@@ -122,7 +122,7 @@ module.exports = class AdwordsController {
         operator: 'ADD',
         operand: {
           campaignId: options.campaignId,
-          name: options.name,
+          name: options.groupName,
           status: 'ENABLED',
           settings: [
             {
@@ -170,53 +170,110 @@ module.exports = class AdwordsController {
     });
   }
 
+  /**
+   *
+   * @param {object} options
+   * @param {String} options.adGroupId
+   * @param {String} options.keyword1
+   * @param {String} options.keyword2
+   * @param {String} options.keyword3
+   * @param {String} options.keyword4
+   * @param {String} options.url
+   *
+   */
+
   addKeyword(options) {
     const ad_group_criterion_service = this.user.getService(
       'AdGroupCriterionService',
       'v201802'
     );
 
+    let keywordOperations = [];
     //Construct keyword ad group criterion object.
-    const keyword1 = {
-      adGroupId: options.adGroupId,
-      criterion: {
-        'xsi:type': 'Keyword',
-        text: 'mars',
-        matchType: 'BROAD'
-      },
-      'xsi:type': 'BiddableAdGroupCriterion',
-      // These fields are optional.
-      userStatus: 'PAUSED',
-      finalUrls: {
-        urls: ['http://example.com/mars']
-      }
-    };
+    const keywords = options.map(option => {
+      const keyword1 = {
+        adGroupId: option.adGroupId,
+        criterion: {
+          'xsi:type': 'Keyword',
+          text: option.keyword1,
+          matchType: 'EXACT'
+        },
+        'xsi:type': 'BiddableAdGroupCriterion',
+        // These fields are optional.
+        userStatus: 'PAUSED',
+        finalUrls: {
+          urls: [option.url]
+        }
+      };
+      keywordOperations.push(keyword1);
 
-    const keyword2 = {
-      'xsi:type': 'NegativeAdGroupCriterion',
-      adGroupId: options.adGroupId,
-      criterion: {
-        'xsi:type': 'Keyword',
-        text: 'pluto',
-        matchType: 'EXACT'
-      }
-    };
+      const keyword2 = {
+        adGroupId: option.adGroupId,
+        criterion: {
+          'xsi:type': 'Keyword',
+          text: option.keyword2,
+          matchType: 'PHRASE'
+        },
+        'xsi:type': 'BiddableAdGroupCriterion',
+        // These fields are optional.
+        userStatus: 'PAUSED',
+        finalUrls: {
+          urls: [option.url]
+        }
+      };
 
-    const operations = [
-      {
+      keywordOperations.push(keyword2);
+      const keyword3 = {
+        adGroupId: option.adGroupId,
+        criterion: {
+          'xsi:type': 'Keyword',
+          text: option.keyword3,
+          matchType: 'BROAD'
+        },
+        'xsi:type': 'BiddableAdGroupCriterion',
+        // These fields are optional.
+        userStatus: 'PAUSED',
+        finalUrls: {
+          urls: [option.url]
+        }
+      };
+
+      keywordOperations.push(keyword3);
+      const keyword4 = {
+        'xsi:type': 'NegativeAdGroupCriterion',
+        adGroupId: option.adGroupId,
+        criterion: {
+          'xsi:type': 'Keyword',
+          text: option.keyword4,
+          matchType: 'EXACT'
+        }
+      };
+      keywordOperations.push(keyword4);
+      return { keyword1, keyword2, keyword3, keyword4 };
+    });
+
+    const operations = keywordOperations.map(keyword => {
+      return {
         operator: 'ADD',
-        operand: keyword1
-      },
-      {
-        operator: 'ADD',
-        operand: keyword2
-      }
-    ];
+        operand: keyword
+      };
+    });
 
     return Promise.fromCallback(callback => {
       ad_group_criterion_service.mutate({ operations: operations }, callback);
     });
   }
+
+  /**
+   *
+   * @param {object} options
+   * @param {String} options.adGroupId
+   * @param {String} options.headline1
+   * @param {String} options.headline2
+   * @param {String} options.description
+   * @param {String} options.url
+   *
+   */
 
   addExpandedTextAd(options) {
     const ad_group_ad_service = this.user.getService(
@@ -224,24 +281,25 @@ module.exports = class AdwordsController {
       'v201802'
     );
 
-    const operations = [
-      {
+    const operations = options.map(option => {
+      const operation = {
         operator: 'ADD',
         operand: {
           'xsi:type': 'AdGroupAd',
-          adGroupId: options.adGroupId,
+          adGroupId: option.adGroupId,
           ad: {
             'xsi:type': 'ExpandedTextAd',
-            finalUrls: ['http://www.example.com/khkjhkjh'],
-            headlinePart1: 'Node test',
-            headlinePart2: 'node controller',
-            description: 'Buy your tickets now!'
+            finalUrls: [option.url],
+            headlinePart1: option.headline1,
+            headlinePart2: option.headline2,
+            description: option.description
           },
           // Optional fields.
           status: 'PAUSED'
         }
-      }
-    ];
+      };
+      return operation;
+    });
 
     return Promise.fromCallback(callback => {
       ad_group_ad_service.mutate({ operations: operations }, callback);
@@ -249,6 +307,13 @@ module.exports = class AdwordsController {
   }
 
   // *** Read requests
+
+  /**
+   *
+   * @param {object} options
+   *
+   */
+
   getCampaigns(options) {
     const campaign_service = this.user.getService('CampaignService', 'v201802');
 
