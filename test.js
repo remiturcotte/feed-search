@@ -1,9 +1,16 @@
 const AdwordsController = require('./adwords-controller');
 const shortid = require('shortid');
 const csv = require('csvtojson');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 const Promise = require('bluebird');
 
-const csvFile = './sampleData/MOCK_DATA.csv';
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+
+const csvFile = './sampleData/mockCsvShort.csv'; //MOCK_DATA.csv';
+
+db.defaults({ products: [] }).write();
 
 function clock(start) {
   if (!start) return process.hrtime();
@@ -88,8 +95,8 @@ function callAPI(products) {
   Promise.map(
     products,
     async function(product) {
-      const API = await controller.addAdGroup(product);
-      product.adGroupId = API.value[0].id;
+      const addGroup = await controller.addAdGroup(product);
+      product.adGroupId = addGroup.value[0].id;
       return product;
     },
     { concurrency: 5 }
@@ -98,10 +105,47 @@ function callAPI(products) {
       console.log('groups done');
       groupsArray = res;
 
+      db.set('products', groupsArray).write();
+      db
+        .get('products')
+        .each(item => (item.keywordIds = []))
+        .write();
+
       controller.addKeyword(groupsArray).then(res => {
-        console.log(res);
+        console.log('keyword', res.value);
+        for (var key in res.value) {
+          console.log(
+            'keyword line',
+            res.value[key].adGroupId,
+            res.value[key].criterion.id
+          );
+
+          const keywords = db
+            .get('products')
+            .find({ adGroupId: res.value[key].adGroupId })
+            .get('keywordIds')
+            .concat(res.value[key].criterion.id)
+            .value();
+
+          //Find one in array where x =
+          db
+            .get('products')
+            .find({ adGroupId: res.value[key].adGroupId })
+            .assign({ keywordIds: keywords })
+            .write();
+        }
+        // //** save this */
         controller.addExpandedTextAd(groupsArray).then(res => {
-          console.log(res);
+          console.log('ads', res);
+          //** save this */
+          for (var key in res.value) {
+            console.log('ad line', res.value[key].ad);
+            db
+              .get('products')
+              .find({ adGroupId: res.value[key].adGroupId })
+              .assign({ extendedTextAdIds: res.value[key].ad.id })
+              .write();
+          }
           const duration = clock(start);
           console.log(
             '-----------------------------------------Operation took ' +
@@ -110,44 +154,6 @@ function callAPI(products) {
           );
         });
       });
-
-      // Promise.map(
-      //   res,
-      //   async function(product) {
-      //     const API = await controller.addKeyword(product);
-      //     product.keywordResult = API.value[0];
-      //     return product;
-      //   },
-      //   { concurrency: 1 }
-      // )
-      //   .then(res => {
-      //     console.log('keywords done');
-
-      //     // Promise.map(
-      //     //   res,
-      //     //   async function(product) {
-      //     //     const API = await controller.addExpandedTextAd(product);
-      //     //     product.adExpandedResult = API.value[0];
-      //     //     return product;
-      //     //   },
-      //     //   { concurrency: 1 }
-      //     // )
-      //     //   .then(res => {
-      //     //     //console.log(res);
-      //     //     const duration = clock(start);
-      //     //     console.log(
-      //     //       '-----------------------------------------Operation took ' +
-      //     //         duration +
-      //     //         'ms'
-      //     //     );
-      //     //   })
-      //     //   .catch(err => {
-      //     //     console.log('ads', err.body);
-      //     //   });
-      //   })
-      //   .catch(err => {
-      //     console.log('keywords', err.body);
-      //   });
     })
     .catch(err => console.log('groups', err));
 }
@@ -157,3 +163,43 @@ function callAPI(products) {
 // controller.addExpandedTextAd(options).then(res => console.log(res));
 
 // controller.getCampaigns(options).then(res => console.log(res));
+
+// *** update section
+// controller
+//   .updateCampaign(campaignOptions)
+//   .then(res => {
+//     console.log(res);
+//     campaignOptions.campaignId = res.value[0].id;
+//     console.log('Set campaign Id', campaignOptions.campaignId);
+//   })
+//   .then(() => {});
+
+// function callAPI(products) {
+//   Promise.map(
+//     products,
+//     async function(product) {
+//       const updateGroup = await controller.updateAdGroup(product);
+//       product.adGroupId = updateGroup.value[0].id;
+//       return product;
+//     },
+//     { concurrency: 5 }
+//   )
+//     .then(res => {
+//       console.log('groups done');
+//       groupsArray = res;
+
+//       controller.updateKeyword(groupsArray).then(res => {
+//         console.log(res);
+//         controller.updateExpandedTextAd(groupsArray).then(res => {
+//           console.log(res);
+//           const duration = clock(start);
+//           console.log(
+//             '-----------------------------------------Operation took ' +
+//               duration +
+//               'ms'
+//           );
+//         });
+//       });
+//     })
+//     .catch(err => console.log('groups', err));
+// }
