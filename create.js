@@ -27,14 +27,14 @@ let campaignOptions = {
   headline2: 'are great',
   description: 'like really, really awesome buy one',
   keyword1: 'widgets',
-  keyword2: 'thingys',
-  keyword3: 'gadgets',
-  keyword4: 'foods',
+  keyword2: 'new thing',
+  keyword3: 'fidget',
+  keyword4: 'spinners',
   url: 'http://www.example.com/widget',
   startDate: '2018-09-03',
   endDate: '2028-08-14',
   budgetId: '1385663724', // hard code this for now
-  campaignId: '',
+  campaignId: '1342400147',
   adGroupId: ''
 };
 // campaignId: '1333006300',
@@ -143,7 +143,7 @@ function callAPI(products) {
             db
               .get('products')
               .find({ adGroupId: res.value[key].adGroupId })
-              .assign({ extendedTextAdIds: res.value[key].ad.id })
+              .assign({ extendedTextAdId: res.value[key].ad.id })
               .write();
           }
           const duration = clock(start);
@@ -163,43 +163,3 @@ function callAPI(products) {
 // controller.addExpandedTextAd(options).then(res => console.log(res));
 
 // controller.getCampaigns(options).then(res => console.log(res));
-
-// *** update section
-// controller
-//   .updateCampaign(campaignOptions)
-//   .then(res => {
-//     console.log(res);
-//     campaignOptions.campaignId = res.value[0].id;
-//     console.log('Set campaign Id', campaignOptions.campaignId);
-//   })
-//   .then(() => {});
-
-// function callAPI(products) {
-//   Promise.map(
-//     products,
-//     async function(product) {
-//       const updateGroup = await controller.updateAdGroup(product);
-//       product.adGroupId = updateGroup.value[0].id;
-//       return product;
-//     },
-//     { concurrency: 5 }
-//   )
-//     .then(res => {
-//       console.log('groups done');
-//       groupsArray = res;
-
-//       controller.updateKeyword(groupsArray).then(res => {
-//         console.log(res);
-//         controller.updateExpandedTextAd(groupsArray).then(res => {
-//           console.log(res);
-//           const duration = clock(start);
-//           console.log(
-//             '-----------------------------------------Operation took ' +
-//               duration +
-//               'ms'
-//           );
-//         });
-//       });
-//     })
-//     .catch(err => console.log('groups', err));
-// }
