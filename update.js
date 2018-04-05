@@ -53,12 +53,12 @@ const controller = new AdwordsController();
 
 const options = [
   {
-    headline1: 'lskjdf',
+    headline1: 'New ads',
     headline2: 'are great',
     description: 'like rlkdjfleally, really awesome buy one',
     url: 'http://www.example.com/Kanlam',
-    adGroupId: '54596998540',
-    extendedTextAdId: '262112748608'
+    adGroupId: '56774014947',
+    extendedTextAdId: '262341765549'
   }
   //   {
   //     adGroupId: '54188101416',
@@ -82,7 +82,13 @@ const options = [
   //   // }
 ];
 
-controller.updateExpandedTextAd(options).then(res => console.log(res));
+controller
+  .updateExpandedTextAd(options)
+  .then(res => {
+    console.log('Success', res.value);
+    console.log('Failure', res.partialFailureErrors);
+  })
+  .catch(err => console.log(err.body));
 
 function updateAPI(products) {
   Promise.map(
