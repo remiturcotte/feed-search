@@ -1,0 +1,66 @@
+{
+  "_args": [
+    [
+      "node-adwords@201802.2.0",
+      "/home/aengus/client/labzed/adwords-api-integration"
+    ]
+  ],
+  "_from": "node-adwords@201802.2.0",
+  "_id": "node-adwords@201802.2.0",
+  "_inBundle": false,
+  "_integrity": "sha512-fryAXomxs1BaB3yijQlHaC/A/F3n7V8Qy4IBcWPpR6xV6LkU/UaE2IempmFLjaIKVAonNsjpaWLaNp9H+zG58Q==",
+  "_location": "/node-adwords",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "node-adwords@201802.2.0",
+    "name": "node-adwords",
+    "escapedName": "node-adwords",
+    "rawSpec": "201802.2.0",
+    "saveSpec": null,
+    "fetchSpec": "201802.2.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/node-adwords/-/node-adwords-201802.2.0.tgz",
+  "_spec": "201802.2.0",
+  "_where": "/home/aengus/client/labzed/adwords-api-integration",
+  "author": {
+    "name": "Chris Alvares",
+    "email": "mail@chrisalvares.com"
+  },
+  "bugs": {
+    "url": "https://github.com/ChrisAlvares/node-adwords/issues"
+  },
+  "dependencies": {
+    "async": "^2.6.0",
+    "googleapis": "^20.1.0",
+    "lodash": "^4.17.5",
+    "moment": "^2.20.1",
+    "request": "^2.83.0",
+    "soap": "^0.23.0",
+    "xmlbuilder": "^9.0.7"
+  },
+  "description": "An unofficial - feature complete - Adwords sdk for NodeJS",
+  "devDependencies": {
+    "mocha": "^5.0.1"
+  },
+  "homepage": "https://github.com/ChrisAlvares/node-adwords#readme",
+  "keywords": [
+    "adwords",
+    "api"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "node-adwords",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisAlvares/node-adwords.git"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "version": "201802.2.0"
+}

@@ -2,8 +2,8 @@
 
 require('dotenv').load();
 const Promise = require('bluebird');
-const AdwordsUser = require('node-adwords').AdwordsUser;
-const AdwordsConstants = require('node-adwords').AdwordsConstants;
+const AdwordsUser = require('./node-adwords').AdwordsUser;
+const AdwordsConstants = require('./node-adwords').AdwordsConstants;
 
 module.exports = class AdwordsController {
   constructor() {
@@ -552,6 +552,7 @@ module.exports = class AdwordsController {
    */
 
   updateExpandedTextAd(options) {
+    // this.user.partial_failure = 'True';
     const ad_group_ad_service = this.user.getService(
       'AdGroupAdService',
       'v201802'
@@ -594,7 +595,7 @@ module.exports = class AdwordsController {
         status: 'PAUSED'
       }
     });
-    console.log(operations);
+    console.log('operations', operations);
     return Promise.fromCallback(callback => {
       ad_group_ad_service.mutate({ operations: operations }, callback);
     });
