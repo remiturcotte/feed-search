@@ -56,7 +56,7 @@ controller
       .fromFile(csvFile)
       .on('json', jsonObj => {
         let productsObj = {};
-        let productsObj = {};
+
         const sentence = jsonObj['(X) title'];
         const extraction_result = keyword_extractor.extract(sentence, {
           language: 'english',
