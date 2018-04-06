@@ -8,7 +8,7 @@ const Promise = require('bluebird');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-const csvFile = './sampleData/mockCsvShort.csv'; //MOCK_DATA.csv';
+const csvFile = './sampleData/ExportShort.csv'; //MOCK_DATA.csv';
 
 db.defaults({ products: [] }).write();
 
@@ -55,36 +55,26 @@ controller
     csv()
       .fromFile(csvFile)
       .on('json', jsonObj => {
-        jsonObj.groupName =
-          jsonObj.Product.split(' ')
-            .shift()
-            .split(',')
-            .shift() +
-          ' ' +
-          shortid.generate();
-        jsonObj.headline1 = jsonObj.Product.split(' ')
-          .shift()
-          .split(',')
-          .shift()
-          .substring(0, 29);
-        jsonObj.headline2 = campaignOptions.headline2;
-        jsonObj.description = campaignOptions.description;
-        jsonObj.keyword1 = jsonObj.Product.split(' ')
-          .shift()
-          .split(',')
-          .shift();
-        jsonObj.keyword2 = campaignOptions.keyword2;
-        jsonObj.keyword3 = campaignOptions.keyword3;
-        jsonObj.keyword4 = campaignOptions.keyword4;
-        jsonObj.url =
-          'http://www.example.com/' +
-          jsonObj.Product.replace(/ /g, '').replace(/,/g, '');
-        jsonObj.startDate = campaignOptions.startDate;
-        jsonObj.endDate = campaignOptions.endDate;
-        jsonObj.budgetId = campaignOptions.budgetId;
-        jsonObj.campaignId = campaignOptions.campaignId;
-        jsonObj.adGroupId = campaignOptions.adGroupId;
-        productArray.push(jsonObj);
+        let productsObj = {};
+
+        productsObj.groupName =
+          jsonObj['(X) g:brand'] + ' ' + jsonObj['(X) g:mpn'];
+        productsObj.headline1 = jsonObj['(X) g:brand'].substring(0, 30);
+        productsObj.headline2 = jsonObj['(X) title'];
+        productsObj.description = jsonObj['(X) description'];
+
+        productsObj.keyword1 = jsonObj.Product.split(' ');
+        productsObj.keyword2 = campaignOptions.keyword2;
+        productsObj.keyword3 = campaignOptions.keyword3;
+        productsObj.keyword4 = campaignOptions.keyword4;
+
+        productsObj.url = jsonObj['(X) link'];
+        productsObj.startDate = campaignOptions.startDate;
+        productsObj.endDate = campaignOptions.endDate;
+        productsObj.budgetId = campaignOptions.budgetId;
+        productsObj.campaignId = campaignOptions.campaignId;
+        productsObj.adGroupId = campaignOptions.adGroupId;
+        productArray.push(productsObj);
       })
       .on('done', error => {
         callAPI(productArray);
