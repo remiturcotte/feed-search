@@ -25,8 +25,8 @@ let campaignOptions = {
   campaignName: 'From product feed export ' + shortid.generate(),
   groupName: '',
   headline1: '', // must be less than 30 characters
-  headline2: '',
-  description: '',
+  headline2: '', // must be less than 30 characters
+  description: '', // must be less than 38 characters
   keyword1: '',
   keyword2: '',
   keyword3: '',
@@ -70,8 +70,8 @@ controller
         productsObj.groupName =
           jsonObj['(X) g:brand'] + ' ' + jsonObj['(X) g:mpn'];
         productsObj.headline1 = jsonObj['(X) g:brand'].substring(0, 30);
-        productsObj.headline2 = jsonObj['(X) title'];
-        productsObj.description = jsonObj['(X) description'];
+        productsObj.headline2 = jsonObj['(X) title'].substring(0, 30);
+        productsObj.description = jsonObj['(X) description'].substring(0, 38);
 
         productsObj.keyword1 = filtered[0];
         productsObj.keyword2 = filtered[1];
