@@ -4,6 +4,7 @@ const csv = require('csvtojson');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const Promise = require('bluebird');
+const keyword_extractor = require('keyword-extractor');
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
@@ -21,24 +22,23 @@ const start = clock();
 // do some processing that takes time
 
 let campaignOptions = {
-  campaignName: 'CSV 1000 ' + shortid.generate(),
-  groupName: 'Widgets',
-  headline1: 'Singele row of Widgets', // must be less than 30 characters
-  headline2: 'are great',
-  description: 'like really, really awesome buy one',
-  keyword1: 'widgets',
-  keyword2: 'new thing',
-  keyword3: 'fidget',
-  keyword4: 'spinners',
-  url: 'http://www.example.com/widget',
+  campaignName: 'From product feed export ' + shortid.generate(),
+  groupName: '',
+  headline1: '', // must be less than 30 characters
+  headline2: '',
+  description: '',
+  keyword1: '',
+  keyword2: '',
+  keyword3: '',
+  keyword4: '',
+  url: '',
   startDate: '2018-09-03',
   endDate: '2028-08-14',
   budgetId: '1385663724', // hard code this for now
-  campaignId: '1342400147',
+  campaignId: '',
   adGroupId: ''
 };
-// campaignId: '1333006300',
-// adGroupId: '56153946880'
+
 let productArray = [];
 let groupsArray = [];
 
@@ -56,17 +56,27 @@ controller
       .fromFile(csvFile)
       .on('json', jsonObj => {
         let productsObj = {};
+        let productsObj = {};
+        const sentence = jsonObj['(X) title'];
+        const extraction_result = keyword_extractor.extract(sentence, {
+          language: 'english',
+          remove_digits: true,
+          return_changed_case: true,
+          remove_duplicates: true
+        });
 
+        let filtered = extraction_result.filter(word => word != 'â€');
+        //console.log(filtered);
         productsObj.groupName =
           jsonObj['(X) g:brand'] + ' ' + jsonObj['(X) g:mpn'];
         productsObj.headline1 = jsonObj['(X) g:brand'].substring(0, 30);
         productsObj.headline2 = jsonObj['(X) title'];
         productsObj.description = jsonObj['(X) description'];
 
-        productsObj.keyword1 = jsonObj.Product.split(' ');
-        productsObj.keyword2 = campaignOptions.keyword2;
-        productsObj.keyword3 = campaignOptions.keyword3;
-        productsObj.keyword4 = campaignOptions.keyword4;
+        productsObj.keyword1 = filtered[0];
+        productsObj.keyword2 = filtered[1];
+        productsObj.keyword3 = filtered[2];
+        productsObj.keyword4 = filtered[3];
 
         productsObj.url = jsonObj['(X) link'];
         productsObj.startDate = campaignOptions.startDate;
