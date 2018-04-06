@@ -240,12 +240,17 @@ module.exports = class AdwordsController {
 
       keywordOperations.push(keyword3);
       const keyword4 = {
-        'xsi:type': 'NegativeAdGroupCriterion',
         adGroupId: option.adGroupId,
         criterion: {
           'xsi:type': 'Keyword',
           text: option.keyword4,
-          matchType: 'EXACT'
+          matchType: 'BROAD'
+        },
+        'xsi:type': 'BiddableAdGroupCriterion',
+        // These fields are optional.
+        userStatus: 'PAUSED',
+        finalUrls: {
+          urls: [option.url]
         }
       };
       keywordOperations.push(keyword4);
