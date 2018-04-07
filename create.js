@@ -9,7 +9,7 @@ const keyword_extractor = require('keyword-extractor');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-const csvFile = './sampleData/ExportShort.csv'; //MOCK_DATA.csv';
+const csvFile = './sampleData/CDR-ProductFeedExport.csv'; //MOCK_DATA.csv';
 
 db.defaults({ products: [] }).write();
 
@@ -57,7 +57,7 @@ controller
       .on('json', jsonObj => {
         let productsObj = {};
 
-        const sentence = jsonObj['(X) title'];
+        const sentence = jsonObj['(X) title'].replace(/\W/g, ' ');
         const extraction_result = keyword_extractor.extract(sentence, {
           language: 'english',
           remove_digits: true,
@@ -67,8 +67,9 @@ controller
 
         let filtered = extraction_result.filter(word => word != 'â€');
         //console.log(filtered);
+        productsObj.lineNum = jsonObj['#'];
         productsObj.groupName =
-          jsonObj['(X) g:brand'] + ' ' + jsonObj['(X) g:mpn'];
+          jsonObj['(X) g:brand'] + ' ' + shortid.generate();
         productsObj.headline1 = jsonObj['(X) g:brand'].substring(0, 30);
         productsObj.headline2 = jsonObj['(X) title'].substring(0, 30);
         productsObj.description = jsonObj['(X) description'].substring(0, 38);
@@ -76,7 +77,7 @@ controller
         productsObj.keyword1 = filtered[0];
         productsObj.keyword2 = filtered[1];
         productsObj.keyword3 = filtered[2];
-        productsObj.keyword4 = filtered[3];
+        productsObj.keyword4 = filtered[3] ? filtered[3] : filtered[0];
 
         productsObj.url = jsonObj['(X) link'];
         productsObj.startDate = campaignOptions.startDate;
@@ -87,6 +88,7 @@ controller
         productArray.push(productsObj);
       })
       .on('done', error => {
+        // db.set('products', productArray).write();
         callAPI(productArray);
       });
   });
@@ -96,6 +98,7 @@ function callAPI(products) {
     products,
     async function(product) {
       const addGroup = await controller.addAdGroup(product);
+      console.log('addGroup', addGroup);
       product.adGroupId = addGroup.value[0].id;
       return product;
     },
@@ -112,13 +115,23 @@ function callAPI(products) {
         .write();
 
       controller.addKeyword(groupsArray).then(res => {
-        console.log('keyword', res.value);
-        for (var key in res.value) {
-          console.log(
-            'keyword line',
-            res.value[key].adGroupId,
-            res.value[key].criterion.id
-          );
+        console.log('keywords done');
+        for (const key in res['partialFailureErrors']) {
+          console.log(res['partialFailureErrors'][key]);
+          //Find one in array where x =
+          // db
+          //   .get('products')
+          //   .find({ adGroupId: res.value[key].adGroupId })
+          //   .assign({ keywordIds: keywords })
+          //   .write();
+        }
+
+        for (const key in res.value) {
+          // console.log(
+          //   'keyword line',
+          //   res.value[key].adGroupId,
+          //   res.value[key].criterion.id
+          // );
 
           const keywords = db
             .get('products')
@@ -136,10 +149,10 @@ function callAPI(products) {
         }
         // //** save this */
         controller.addExpandedTextAd(groupsArray).then(res => {
-          console.log('ads', res);
+          console.log('ads done');
           //** save this */
           for (var key in res.value) {
-            console.log('ad line', res.value[key].ad);
+            //console.log('ad line', res.value[key].ad);
             db
               .get('products')
               .find({ adGroupId: res.value[key].adGroupId })
