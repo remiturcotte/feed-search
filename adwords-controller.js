@@ -4,6 +4,7 @@ require('dotenv').load();
 const Promise = require('bluebird');
 const AdwordsUser = require('./node-adwords').AdwordsUser;
 const AdwordsConstants = require('./node-adwords').AdwordsConstants;
+const chalk = require('chalk');
 
 module.exports = class AdwordsController {
   constructor() {
@@ -115,6 +116,7 @@ module.exports = class AdwordsController {
    */
 
   addAdGroup(options) {
+    console.log(`Creating Ad Group: ${chalk.green(options.groupName)}`);
     const ad_group_service = this.user.getService('AdGroupService', 'v201802');
 
     const operations = [
@@ -183,6 +185,8 @@ module.exports = class AdwordsController {
    */
 
   addKeyword(options) {
+    console.log(`Adding Keywords ${options.length}`);
+
     const ad_group_criterion_service = this.user.getService(
       'AdGroupCriterionService',
       'v201802'
@@ -265,6 +269,7 @@ module.exports = class AdwordsController {
     });
 
     return Promise.fromCallback(callback => {
+      console.log(`Keywords mutate ${operations.length}`)
       ad_group_criterion_service.mutate({ operations: operations }, callback);
     });
   }
@@ -281,6 +286,7 @@ module.exports = class AdwordsController {
    */
 
   addExpandedTextAd(options) {
+    console.log(`addExpandedTextAd ${chalk.green(options.length)}`);
     const ad_group_ad_service = this.user.getService(
       'AdGroupAdService',
       'v201802'
@@ -307,6 +313,7 @@ module.exports = class AdwordsController {
     });
 
     return Promise.fromCallback(callback => {
+      console.log(`Expanded Text Ads mutate ${operations.length}`)
       ad_group_ad_service.mutate({ operations: operations }, callback);
     });
   }

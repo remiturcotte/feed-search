@@ -5,6 +5,7 @@ const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const Promise = require('bluebird');
 const keyword_extractor = require('keyword-extractor');
+const chalk = require('chalk');
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
@@ -50,11 +51,14 @@ controller
     console.log(res);
     campaignOptions.campaignId = res.value[0].id;
     console.log('Set campaign Id', campaignOptions.campaignId);
+    console.log(`Importing into campaign ${chalk.green(campaignOptions.campaignName)}`)
+
   })
   .then(() => {
     csv()
       .fromFile(csvFile)
       .on('json', jsonObj => {
+
         let productsObj = {};
 
         const brandKeyword = jsonObj['(X) g:brand'].replace(/\W/g, ' ');
@@ -122,7 +126,6 @@ function callAPI(products) {
     products,
     async function(product) {
       const addGroup = await controller.addAdGroup(product);
-      //console.log('addGroup', addGroup);
       product.adGroupId = addGroup.value[0].id;
       return product;
     },
@@ -195,9 +198,10 @@ function callAPI(products) {
               .write();
           }
           console.log('ads done');
+          console.log(`Done on campaign ${chalk.green(campaignOptions.campaignName)}`)
           const duration = clock(start);
           console.log(
-            '-----------------------------------------Operation took ' +
+            '-----------------------------------------\nOperation took ' +
               duration +
               'ms'
           );
