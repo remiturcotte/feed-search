@@ -66,7 +66,7 @@ controller
           brandKeyword,
           {
             language: 'english',
-            remove_digits: true,
+            remove_digitskeyword1keyword1: true,
             return_changed_case: true,
             remove_duplicates: true
           }
@@ -99,10 +99,11 @@ controller
         productsObj.headline2 = 'example headline 2'; //jsonObj['(X) title'].substring(0, 30);
         productsObj.description = 'Test ad description'; //jsonObj['(X) description'].substring(0, 38);
 
-        productsObj.keyword1 = brandFiltered[0] ? brandFiltered[0] : 'brand';
-        productsObj.keyword2 = typeFiltered[0] ? typeFiltered[0] : 'razor';
-        productsObj.keyword3 = typeFiltered[1] ? typeFiltered[1] : 'grooming';
-        productsObj.keyword4 = typeFiltered[2] ? typeFiltered[2] : 'centre';
+        const productName = jsonObj['(X) g:brand'] + ' ' + jsonObj['(X) g:id'];
+        productsObj.keyword1 = productName; //brandFiltered[0] ? brandFiltered[0] : 'brand';
+        productsObj.keyword2 = productName; //typeFiltered[0] ? typeFiltered[0] : 'razor';
+        productsObj.keyword3 = productName; //typeFiltered[1] ? typeFiltered[1] : 'grooming';
+        productsObj.keyword4 = productName; //typeFiltered[2] ? typeFiltered[2] : 'centre';
 
         productsObj.url = jsonObj['(X) link']
           ? jsonObj['(X) link']
@@ -116,7 +117,7 @@ controller
       })
       .on('done', error => {
         // db.set('products', productArray).write();
-        callAPI(productArray);
+        callAPI(productArray.slice(0, 10));
       });
   });
 
