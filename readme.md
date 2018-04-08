@@ -1,3 +1,25 @@
+## Shell commands 
+
+### Run the script
+
+`npm start`
+
+### Node version 9
+
+If node is not version 9, set it to use node 9:
+
+`nvm use 9`
+
+or if it doesn't work, install node 9:
+
+`nvm install 9`
+
+
+
+
+
+
+
 ## Campaign
 
 Fields
